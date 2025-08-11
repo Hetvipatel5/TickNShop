@@ -1,0 +1,180 @@
+/*body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #1A1A1A;
+    padding: 20px;
+    text-align: center;
+    color: #D4AF37;
+}
+
+h1, h4 {
+    margin: 0;
+}*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #000000; /* Primary: Rich Black */
+    color: #FFFFFF; /* Text: White */
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #000000; /* Primary */
+    padding: 15px 30px;
+    border-bottom: 1px solid #1A1A1A; /* Secondary */
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #D4AF37; /* Accent: Luxury Gold */
+}
+
+.navbar a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #FFFFFF; /* White text */
+}
+
+.navbar a:hover {
+    color: #FFD700; /* Highlight Gold */
+}
+
+.icons span {
+    margin-left: 15px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #FFFFFF; /* White icons */
+}
+
+/* BANNER */
+.banner {
+    background: url('images/home_image.jpg') no-repeat center center;
+    background-size: cover;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF; /* White text */
+    text-align: center;
+}
+
+.banner-text h1 {
+    font-size: 40px;
+    margin: 0;
+}
+
+.banner-text p {
+    font-size: 20px;
+}
+
+/* MAIN LAYOUT */
+.main-content {
+    display: flex;
+    margin: 20px;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 40%;
+    padding: 25px;
+    background: #1A1A1A; /* Secondary: Charcoal Black */
+    border-right: 1px solid #D4AF37; /* Accent */
+    text-align: start;
+}
+
+.sidebar h3 {
+    margin-bottom: 15px;
+    color: #FFD700; /* Highlight Gold */
+}
+
+
+.product-grid {
+   display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.product-card {
+    background-color: #1A1A1A; /* Secondary */
+    border: 2px solid #D4AF37; /* Accent */
+    border-radius: 8px;
+    width: 300px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+.product-card img {
+   width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-bottom: 2px solid #FFD700; /* Highlight */
+}
+
+.price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #FFFFFF; /* White text */
+}
+
+.buttons {
+      display: flex;
+    justify-content: space-between;
+}
+button {
+    background-color: #FFD700; /* Highlight */
+    color: #000000; /* Primary text */
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+button:hover {
+    background-color: #D4AF37; /* Accent */
+}
+
+.buy, .wishlist {
+    background-color: #D4AF37;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: black;
+    font-weight: bold;
+}
+
+.buy:hover, .wishlist:hover {
+    background-color: #FFD700;
+}
+
+.product-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.product-detail img {
+    max-width: 400px;
+    border-radius: 10px;
+}
