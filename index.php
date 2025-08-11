@@ -25,7 +25,7 @@ include 'db.php';
         </nav>
         <div class="icons">
             <span>🔍</span>
-            <span>❤</span>
+            <a href="wishlist.php" title="Login"><span>❤</span></a>
             <a href="login.php" title="Login"><span>👤</span></a>
             <span>🛒</span>
         </div>
