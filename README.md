@@ -18,7 +18,7 @@ Welcome to **TickNShop**, a PHP-based web project featuring a stylish, gender-ne
 
 ## About
 
-TickNShop is a simple and elegant watch store built using PHP, HTML, CSS, and MySQL. The project showcases a gender-neutral design, offering both men’s and women’s watches in a single, inclusive storefront.
+TickNShop is a simple and elegant watch store built using PHP, HTML, CSS, and MySQL.The project showcases a gender-neutral design, offering both men’s and women’s watches in a single,inclusive storefront.
 
 ---
 
