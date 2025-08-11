@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TickNShop | Login</title>
+<title>TickNShop | Signup</title>
 <style>
     * {
         margin: 0;
@@ -69,14 +69,16 @@
 <div class="overlay"></div>
 
 <div class="login-box">
-    <h2>Login to TickNShop</h2>
-    <form action="login_process.php" method="post">
+    <h2>Create Your TickNShop Account</h2>
+    <form action="signup_process.php" method="post">
+        <input type="text" name="fullname" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
-        <input type="submit" value="Login">
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        <input type="submit" value="Sign Up">
     </form>
-    <p><a href="#">Forgot Password?</a></p>
-    <p><a href="signup.php">Create an Account</a></p>
+    <p><a href="login.php">Already have an account? Login</a></p>
 </div>
 
 </body>
