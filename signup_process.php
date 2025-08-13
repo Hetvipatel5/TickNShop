@@ -1,4 +1,5 @@
 <?php
+include 'message.php'; // ✅ Include the message function file
 // Database connection
 $servername = "localhost";
 $username = "root"; // default XAMPP username
@@ -9,7 +10,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die(showMessage("error", "Connection failed: " . $conn->connect_error, "Try Again", "signup.php"));
 }
 
 // Get form data
@@ -21,7 +22,7 @@ $confirm_pass = trim($_POST['confirm_password']);
 
 // Validate passwords match
 if ($pass !== $confirm_pass) {
-    die("<h3 style='color:red; text-align:center;'>Passwords do not match! <a href='signup.php'>Go Back</a></h3>");
+    die(showMessage("error", "Passwords do not match!", "Go Back", "signup.php"));
 }
 
 // ✅ Check if email already exists
@@ -31,7 +32,7 @@ $check_email->execute();
 $check_email->store_result();
 
 if ($check_email->num_rows > 0) {
-    die("<h3 style='color:red; text-align:center;'>Email already registered! <a href='signup.php'>Try again</a></h3>");
+    die(showMessage("error", "Email already registered!", "Try again", "signup.php"));
 }
 $check_email->close();
 
@@ -44,9 +45,9 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("ssss", $fullname, $email, $user, $hashed_password);
 
 if ($stmt->execute()) {
-    echo "<h3 style='color:green; text-align:center;'>Signup successful! <a href='login.php'>Login here</a></h3>";
+    showMessage("success", "Signup successful!", "Login here", "login.php");
 } else {
-    echo "<h3 style='color:red; text-align:center;'>Error: " . $stmt->error . "</h3>";
+    showMessage("error", "Error: " . $stmt->error, "Try Again", "signup.php");
 }
 
 $stmt->close();

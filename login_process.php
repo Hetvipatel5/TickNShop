@@ -1,4 +1,6 @@
 <?php
+include 'message.php'; // ✅ Include the message function file
+
 // Database connection
 $servername = "localhost";
 $username = "root";
@@ -34,15 +36,14 @@ if ($result->num_rows === 1) {
         $log_stmt->execute();
         $log_stmt->close();
 
-        echo "<h3 style='color:green; text-align:center;'>Login successful! Welcome, {$row['username']}.</h3>";
-        // Redirect to home page
-        // header("Location: index.php");
-        // exit;
+        // ✅ Use the background message function
+        showMessage("success", "Login successful! Welcome, {$row['username']}.", "Go to Home", "index.php");
+
     } else {
-        echo "<h3 style='color:red; text-align:center;'>Invalid password! <a href='login.php'>Try again</a></h3>";
+        showMessage("error", "Invalid password!", "Try Again", "login.php");
     }
 } else {
-    echo "<h3 style='color:red; text-align:center;'>User not found! <a href='login.php'>Try again</a></h3>";
+    showMessage("error", "User not found!", "Try Again", "login.php");
 }
 
 $stmt->close();

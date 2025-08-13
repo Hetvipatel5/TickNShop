@@ -50,8 +50,8 @@ include 'db.php';
                 <li>Gender</li>
                 <li>Price</li>
                 <li>Discount</li>
-                <li>Dial Colour</li>
-                <li>Strap Material</li>
+                <li>Top Rated</li>
+                <li>Top Seller</li>
             </ul>
         </aside>
     <div class="product-grid">

@@ -75,7 +75,8 @@
         <input type="password" name="password" placeholder="Password" required>
         <input type="submit" value="Login">
     </form>
-    <p><a href="#">Forgot Password?</a></p>
+    <p><a href="forgot_password.php">Forgot Password?</a></p>
+    <br>
     <p><a href="signup.php">Create an Account</a></p>
 </div>
 
