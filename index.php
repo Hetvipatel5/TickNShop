@@ -7,7 +7,7 @@ include 'db.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TickNShop | Premium Watches</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
 </head>
 <body>
 
@@ -25,7 +25,7 @@ include 'db.php';
         </nav>
         <div class="icons">
             <span>🔍</span>
-            <a href="wishlist.php" title="Login"><span>❤</span></a>
+            <a href="wishlist.php" title="Wishlist"><span>❤</span></a>
             <a href="login.php" title="Login"><span>👤</span></a>
             <span>🛒</span>
         </div>
@@ -70,7 +70,7 @@ include 'db.php';
                     <p class="price"><?php echo $row['price']; ?></p>
                     <div class="buttons">
                         <button class="buy">Add to Cart</button>
-                        <button class="wishlist">♡ Wishlist</button>
+                        <a href="wishlist.php?id=<?php echo $row['id']; ?>"><button class="wishlist">♡ Wishlist</button></a>
                     </div>
                 </div>
                 <?php
@@ -81,6 +81,30 @@ include 'db.php';
         ?>
     </div>
 </main>
+<script>
+document.querySelectorAll('.wishlist-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const productId = button.getAttribute('data-product-id');
+
+        fetch('wishlist_add.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId: productId }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                button.textContent = '✔️ Added to Wishlist';
+                button.disabled = true;
+            } else {
+                alert(data.message || 'Failed to add to wishlist.');
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>
         

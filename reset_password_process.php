@@ -2,7 +2,7 @@
 include 'message.php'; // ✅ Include the message function file
 $conn = new mysqli("localhost", "root", "", "watchshop");
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die(showMessage("error", "Connection failed: " . $conn->connect_error));
 }
 
 $email = trim($_POST['email']);
@@ -10,7 +10,7 @@ $pass = trim($_POST['password']);
 $confirm_pass = trim($_POST['confirm_password']);
 
 if ($pass !== $confirm_pass) {
-    die("<h3 style='color:red; text-align:center;'>Passwords do not match! <a href='reset_password.php?email=" . urlencode($email) . "'>Try again</a></h3>");
+    die(showMessage("error", "Passwords do not match!", "Try Again", "reset_password.php?email=" . urlencode($email)));
 }
 
 // Hash password

@@ -1,26 +1,9 @@
-/*body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #000;
-    color: #fff;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #1A1A1A;
-    padding: 20px;
-    text-align: center;
-    color: #D4AF37;
-}
-
-h1, h4 {
-    margin: 0;
-}*/
+/* GLOBAL THEME */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #000000; /* Primary: Rich Black */
-    color: #FFFFFF; /* Text: White */
+    background-color: #000000; /* Rich Black */
+    color: #FFFFFF; /* White text */
 }
 
 /* HEADER */
@@ -28,32 +11,32 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #000000; /* Primary */
+    background: #000000;
     padding: 15px 30px;
-    border-bottom: 1px solid #1A1A1A; /* Secondary */
+    border-bottom: 1px solid #1A1A1A;
 }
 
 .logo {
     font-size: 22px;
     font-weight: bold;
-    color: #D4AF37; /* Accent: Luxury Gold */
+    color: #D4AF37; /* Luxury Gold */
 }
 
 .navbar a {
     margin: 0 10px;
     text-decoration: none;
-    color: #FFFFFF; /* White text */
+    color: #FFFFFF;
 }
 
 .navbar a:hover {
-    color: #FFD700; /* Highlight Gold */
+    color: #FFD700;
 }
 
 .icons span {
     margin-left: 15px;
     font-size: 18px;
     cursor: pointer;
-    color: #FFFFFF; /* White icons */
+    color: #FFFFFF;
 }
 
 /* BANNER */
@@ -64,17 +47,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #FFFFFF; /* White text */
     text-align: center;
 }
 
 .banner-text h1 {
     font-size: 40px;
     margin: 0;
+    color: #FFD700;
 }
 
 .banner-text p {
     font-size: 20px;
+    color: #FFFFFF;
 }
 
 /* MAIN LAYOUT */
@@ -85,34 +69,52 @@ body {
 
 /* SIDEBAR */
 .sidebar {
-    width: 40%;
+    width: 170px;
     padding: 25px;
-    background: #1A1A1A; /* Secondary: Charcoal Black */
-    border-right: 1px solid #D4AF37; /* Accent */
-    text-align: start;
+    background: #1A1A1A; /* Charcoal Black */
+    border-right: 1px solid #D4AF37;
 }
 
 .sidebar h3 {
     margin-bottom: 15px;
-    color: #FFD700; /* Highlight Gold */
+    color: #FFD700;
+    text-transform: uppercase;
 }
 
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
 
+.sidebar ul li {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.sidebar ul li:hover {
+    background-color: #D4AF37;
+    color: #000000;
+}
+
+/* PRODUCT GRID */
 .product-grid {
-   display: flex;
+    flex: 1;
+    display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 20px;
     padding: 20px;
 }
 
+/* PRODUCT CARD */
 .product-card {
-    background-color: #1A1A1A; /* Secondary */
-    border: 2px solid #D4AF37; /* Accent */
+    background-color: #1A1A1A;
+    border: 2px solid #D4AF37;
     border-radius: 8px;
     width: 300px;
     padding: 15px;
-    margin: 15px 0;
     text-align: center;
     transition: transform 0.3s ease;
 }
@@ -122,51 +124,71 @@ body {
 }
 
 .product-card img {
-   width: 100%;
+    width: 100%;
     height: 300px;
     object-fit: cover;
-    border-bottom: 2px solid #FFD700; /* Highlight */
+    border-bottom: 2px solid #FFD700;
 }
 
+/* FORCE PRODUCT LINK COLOR FIX */
+.product-card a,
+.product-card a:visited,
+.product-card h4,
+.product-card h4:visited,
+.product-detail h2,
+.product-detail h2 a,
+.product-detail h2 a:visited {
+    color: #D4AF37 !important;
+    text-decoration: none !important;
+    font-weight: bold;
+}
+
+.product-card a:hover,
+.product-card h4:hover,
+.product-detail h2 a:hover {
+    color: #FFD700 !important;
+    text-decoration: underline !important;
+}
+
+/* PRICE */
 .price {
     font-size: 1.1rem;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #FFFFFF; /* White text */
+    color: #FFFFFF;
 }
 
+/* BUTTONS */
 .buttons {
-      display: flex;
+    display: flex;
     justify-content: space-between;
 }
+
 button {
-    background-color: #FFD700; /* Highlight */
-    color: #000000; /* Primary text */
+    background-color: #FFD700;
+    color: #000000;
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-    transition: background 0.3s;
+    transition: background 0.3s ease;
 }
+
 button:hover {
-    background-color: #D4AF37; /* Accent */
+    background-color: #D4AF37;
 }
 
 .buy, .wishlist {
     background-color: #D4AF37;
-    border: none;
     padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    color: black;
-    font-weight: bold;
 }
 
 .buy:hover, .wishlist:hover {
     background-color: #FFD700;
 }
 
+/* PRODUCT DETAIL PAGE */
 .product-detail {
     display: flex;
     flex-direction: column;
@@ -178,3 +200,90 @@ button:hover {
     max-width: 400px;
     border-radius: 10px;
 }
+
+.product-detail .details {
+    text-align: center;
+}
+
+.product-detail h2 {
+    color: #D4AF37;
+}
+
+.product-detail .price {
+    color: #FFD700;
+}
+/* ===========================
+   WISHLIST PAGE STYLING
+=========================== */
+
+.wishlist-page {
+    padding: 20px;
+}
+
+.wishlist-page h2 {
+    text-align: center;
+    color: #FFD700; /* Bright Gold */
+    margin-bottom: 20px;
+    font-size: 26px;
+}
+
+/* Product cards in wishlist reuse the same product grid style */
+.wishlist-page .product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Remove button */
+.remove-btn {
+    background-color: #D9534F; /* Bootstrap red tone */
+    color: #FFFFFF;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: none;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.remove-btn:hover {
+    background-color: #B52B27;
+    color: #FFFFFF;
+}
+
+/* Wishlist link button in product cards */
+.wishlist-link {
+    background-color: #D4AF37; /* Luxury Gold */
+    color: #000000; /* Black text */
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    transition: background 0.3s ease;
+}
+
+.wishlist-link:hover {
+    background-color: #FFD700; /* Bright Gold */
+    color: #000000;
+}
+.wishlist-btn {
+    background-color: #D4AF37; /* Luxury Gold */
+    color: #000;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+.wishlist-btn:hover {
+    background-color: #FFD700; /* Bright Gold */
+}
+.wishlist-btn:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+
