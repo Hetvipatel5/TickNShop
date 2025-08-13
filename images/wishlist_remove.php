@@ -13,6 +13,7 @@ if (isset($_GET['id'])) {
     $stmt->bind_param("isi", $product_id, $session_id, $user_id);
     $stmt->execute();
 }
+/*...*/
 
 header("Location: wishlist.php");
 exit;
