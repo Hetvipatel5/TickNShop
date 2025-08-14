@@ -1,31 +1,18 @@
 <?php
 session_start();
 include 'db.php';
-include 'message.php'; // ✅ Include the message function file
+include 'message.php';
 
-// ✅ Prevent undefined key warning
+// Ensure user is logged in
 if (!isset($_SESSION['user_id'])) {
-    // If not logged in, show a message or redirect to login page
     showMessage("error", "You must be logged in to view your wishlist.", "Login", "login.php");
     exit;
 }
 
 $user_id = $_SESSION['user_id'];
 
-// Fetch wishlist items
-$sql = "SELECT p.* 
-        FROM wishlist w 
-        JOIN products p ON w.product_id = p.id 
-        WHERE w.user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user_id = $_SESSION['user_id'];
-
-// Fetch wishlist items
-$sql = "SELECT p.* 
-        FROM wishlist w 
+// Get wishlist products
+$sql = "SELECT p.* FROM wishlist w 
         JOIN products p ON w.product_id = p.id 
         WHERE w.user_id = ?";
 $stmt = $conn->prepare($sql);
@@ -46,6 +33,7 @@ $result = $stmt->get_result();
     <nav class="navbar">
         <a href="index.php">Home</a>
         <a href="wishlist.php">Wishlist</a>
+        <a href="logout.php">Logout</a>
     </nav>
 </header>
 
@@ -59,10 +47,9 @@ $result = $stmt->get_result();
                         <img src="<?php echo $row['image']; ?>" alt="<?php echo $row['name']; ?>">
                         <h4><?php echo $row['name']; ?></h4>
                     </a>
-                    <p class="price"><?php echo $row['price']; ?></p>
+                    <p class="price">₹<?php echo number_format($row['price'], 2); ?></p>
                     <div class="buttons">
-                        <button class="wishlist-btn" data-product-id="<?php echo $row['id']; ?>">❤️ Add to Wishlist</button>
-                        <a href="wishlist_remove.php?id=<?php echo $row['id']; ?>" class="remove-btn">Remove</a>
+                        <a href="wishlist_remove.php?id=<?php echo $row['id']; ?>" class="remove-btn">❌ Remove</a>
                     </div>
                 </div>
             <?php endwhile; ?>
@@ -71,30 +58,6 @@ $result = $stmt->get_result();
         <?php endif; ?>
     </div>
 </main>
-
-<script>
-document.querySelectorAll('.wishlist-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        const productId = button.getAttribute('data-product-id');
-
-        fetch('wishlist_add.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ productId: productId }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                button.textContent = '✔️ Added to Wishlist';
-                button.disabled = true;
-            } else {
-                alert(data.message || 'Failed to add to wishlist.');
-            }
-        });
-    });
-});
-</script>
 </body>
 </html>
+s

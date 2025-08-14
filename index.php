@@ -1,5 +1,12 @@
 <?php
 include 'db.php';
+session_start();
+
+// Restore session from cookies
+if (!isset($_SESSION['user_id']) && isset($_COOKIE['user_id'])) {
+    $_SESSION['user_id'] = $_COOKIE['user_id'];
+    $_SESSION['username'] = $_COOKIE['username'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,11 +31,21 @@ include 'db.php';
             <a href="#">Corporate Sale</a>
         </nav>
         <div class="icons">
-            <span>🔍</span>
-            <a href="wishlist.php" title="Wishlist"><span>❤</span></a>
-            <a href="login.php" title="Login"><span>👤</span></a>
-            <span>🛒</span>
-        </div>
+    <span>🔍</span>
+    <a href="wishlist.php" title="Wishlist"><span>❤</span></a>
+
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <!-- Show logout if logged in -->
+        <a href="logout.php" title="Logout"><span>🔓</span></a>
+    <?php else: ?>
+        <!-- Show login if not logged in -->
+        <a href="login.php" title="Login"><span>👤</span></a>
+    <?php endif; ?>
+
+    <span>🛒</span>
+</div>
+
+        
     </header>
 
     <!-- BANNER -->
@@ -61,6 +78,16 @@ include 'db.php';
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
+                  // ✅ Check if product is already in wishlist (only if logged in)
+                $is_in_wishlist = false;
+                if (isset($_SESSION['user_id'])) {
+                    $check_sql = "SELECT id FROM wishlist WHERE user_id = ? AND product_id = ?";
+                    $check_stmt = $conn->prepare($check_sql);
+                    $check_stmt->bind_param("ii", $_SESSION['user_id'], $row['id']);
+                    $check_stmt->execute();
+                    $is_in_wishlist = $check_stmt->get_result()->num_rows > 0;
+                    $check_stmt->close();
+                }
                 ?>
                 <div class="product-card">
                     <a href="product.php?id=<?php echo $row['id']; ?>">
@@ -69,9 +96,13 @@ include 'db.php';
                     </a>
                     <p class="price"><?php echo $row['price']; ?></p>
                     <div class="buttons">
-                        <button class="buy">Add to Cart</button>
-                        <a href="wishlist.php?id=<?php echo $row['id']; ?>"><button class="wishlist">♡ Wishlist</button></a>
-                    </div>
+                    <button class="buy">Add to Cart</button>
+                     <?php if ($is_in_wishlist): ?>
+                    <button class="wishlist" disabled>❤️ In Wishlist</button>
+                     <?php else: ?>
+                     <a href="wishlist_add.php?id=<?php echo $row['id']; ?>"><button class="wishlist">♡ Wishlist</button></a>
+                     <?php endif; ?>
+</div>
                 </div>
                 <?php
             }
