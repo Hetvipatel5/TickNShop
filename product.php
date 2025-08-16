@@ -56,16 +56,29 @@ if (isset($_GET['id'])) {
                     ? htmlspecialchars($product['description']) 
                     : "No description available."; ?>
             </p>
-            <div class="buttons">
-    <form action="cart.php" method="POST" style="display:inline;">
-        <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-        <button type="submit" class="buy">Add to Cart</button>
-    </form>
+ <div class="buttons">
+  <!-- Add to Cart -->
+  <form action="add_to_cart.php" method="POST" style="display:inline;">
+    <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
+    <button type="submit" class="buy">Add to Cart</button>
+  </form>
 
-    <a href="wishlist_add.php?id=<?php echo (int)$product['id']; ?>">
-        <button class="wishlist">♡ Wishlist</button>
-    </a>
+  <!-- Buy Now (go straight to checkout after adding) -->
+  <form action="add_to_cart.php" method="POST" style="display:inline;">
+    <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="buy_now" value="1">
+    <button type="submit" class="buy">Buy Now</button>
+  </form>
+
+  <!-- Wishlist stays as you had -->
+  <a href="wishlist_add.php?id=<?php echo (int)$product['id']; ?>">
+    <button type="button" class="wishlist">♡ Wishlist</button>
+  </a>
 </div>
+
 
         </div>
     </div>

@@ -61,7 +61,7 @@ if ($resP) {
         <?php else: ?>
             <a href="login.php" title="Login"><span>👤</span></a>
         <?php endif; ?>
-        <span>🛒</span>
+        <a href="cart.php" title="Cart"><span>🛒</span></a>
     </div>
 </header>
 
