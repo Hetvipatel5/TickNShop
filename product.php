@@ -28,6 +28,7 @@ if (isset($_GET['id'])) {
     <title><?php echo htmlspecialchars($product['name']); ?> | TickNShop</title>
     <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
 
 <!-- HEADER -->
@@ -41,23 +42,36 @@ if (isset($_GET['id'])) {
 </header>
 
 <!-- PRODUCT DETAIL -->
-<main class="product-detail">
-    <img src="<?php echo htmlspecialchars($product['image']); ?>" 
-         alt="<?php echo htmlspecialchars($product['name']); ?>">
-    <div class="details">
-        <h2 style="color: #D4AF37;"><?php echo htmlspecialchars($product['name']); ?></h2>
-        <p class="price"><?php echo htmlspecialchars($product['price']); ?></p>
-        <p class="description">
-            <?php echo !empty($product['description']) 
-                ? htmlspecialchars($product['description']) 
-                : "No description available."; ?>
-        </p>
-        <div class="buttons">
-            <button class="buy">Add to Cart</button>
-            <button class="wishlist">♡ Wishlist</button>
+<div class="product-detail-container">
+    <div class="product-detail">
+        <div class="product-image">
+            <img src="<?php echo htmlspecialchars($product['image']); ?>" 
+                 alt="<?php echo htmlspecialchars($product['name']); ?>">
+        </div>
+        <div class="details">
+            <h2><?php echo htmlspecialchars($product['name']); ?></h2>
+            <p class="price">₹<?php echo htmlspecialchars($product['price']); ?></p>
+            <p class="description">
+                <?php echo !empty($product['description']) 
+                    ? htmlspecialchars($product['description']) 
+                    : "No description available."; ?>
+            </p>
+            <div class="buttons">
+    <form action="cart.php" method="POST" style="display:inline;">
+        <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+        <button type="submit" class="buy">Add to Cart</button>
+    </form>
+
+    <a href="wishlist_add.php?id=<?php echo (int)$product['id']; ?>">
+        <button class="wishlist">♡ Wishlist</button>
+    </a>
+</div>
+
         </div>
     </div>
-</main>
+</div>
+
+
 
 </body>
 </html>
