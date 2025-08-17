@@ -1,68 +1,87 @@
-<?php
-// checkout.php
-include 'auth.php'; require_login_or_redirect();
+<?php 
+session_start(); 
 include 'db.php';
 
-$user_id = (int)$_SESSION['user_id'];
+// Ensure cart exists
+$cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
 
-// fetch cart items
-$sql = "SELECT c.product_id, c.quantity, p.price
-        FROM cart c
-        JOIN products p ON p.id = c.product_id
-        WHERE c.user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$res = $stmt->get_result();
-
-$items = [];
-$total = 0;
-while ($r = $res->fetch_assoc()) {
-    $items[] = $r;
-    $total += ($r['price'] * $r['quantity']);
-}
-
-if (!$items) {
-    header("Location: cart.php");
-    exit;
-}
-
-// create order
-$sql = "INSERT INTO orders (user_id, total_price, status) VALUES (?, ?, 'Pending')";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("id", $user_id, $total);
-$stmt->execute();
-$order_id = $stmt->insert_id;
-
-// order items
-$sql = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
-$stmt = $conn->prepare($sql);
-foreach ($items as $it) {
-    $stmt->bind_param("iiid", $order_id, $it['product_id'], $it['quantity'], $it['price']);
-    $stmt->execute();
-}
-
-// clear cart
-$sql = "DELETE FROM cart WHERE user_id=?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
+$totalAmount = 0;
+$totalItems = count($cart);
+$totalQuantity = 0;
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Order Placed | TickNShop</title>
-  <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <meta charset="UTF-8">
+    <title>Checkout | TickNShop</title>
+    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
 </head>
 <body>
-  <main style="max-width:700px;margin:50px auto;background:#1A1A1A;padding:24px;border:2px solid #D4AF37;border-radius:12px;color:#fff;text-align:center;">
-    <h2 style="color:#FFD700;">Thank you! 🎉</h2>
-    <p>Your order <strong>#<?php echo (int)$order_id; ?></strong> has been placed successfully.</p>
-    <a href="index.php" class="btn" style="display:inline-block;margin-top:12px;background:#D4AF37;color:#000;padding:10px 16px;border-radius:6px;text-decoration:none;font-weight:bold;">Continue Shopping</a>
-  </main>
+<header class="header">
+    <div class="logo">TickNShop</div>
+    <nav class="navbar">
+        <a href="index.php">Home</a>
+        <a href="cart.php">Cart</a>
+        <a href="wishlist.php">Wishlist</a>
+        <a href="logout.php">Logout</a>
+    </nav>
+</header>
+
+<h2 style="text-align:center;color:#FFD700;">Checkout</h2>
+
+<div style="max-width:900px;margin:auto;background:#1A1A1A;color:#fff;padding:20px;border-radius:10px;">
+    <h3>Order Summary</h3>
+    <?php if ($totalItems > 0): ?>
+        <table border="1" width="100%" cellpadding="10" style="border-collapse:collapse;text-align:center;">
+            <tr style="background:#FFD700;color:#000;">
+                <th>Product</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Subtotal</th>
+            </tr>
+            <?php foreach ($cart as $item): 
+                $subtotal = $item['price'] * $item['quantity'];
+                $totalAmount += $subtotal;
+                $totalQuantity += $item['quantity'];
+            ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($item['name']); ?></td>
+                    <td>₹<?php echo number_format($item['price'],2); ?></td>
+                    <td><?php echo $item['quantity']; ?></td>
+                    <td>₹<?php echo number_format($subtotal,2); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+        <h3 style="text-align:right;margin-top:15px;">
+            Items: <?php echo $totalItems; ?> | 
+            Quantity: <?php echo $totalQuantity; ?> | 
+            Total: <span style="color:#FFD700;">₹<?php echo number_format($totalAmount,2); ?></span>
+        </h3>
+    <?php else: ?>
+        <p style="text-align:center;color:#FFD700;">Your cart is empty.</p>
+    <?php endif; ?>
+</div>
+
+<?php if ($totalItems > 0): ?>
+<form action="process_order.php" method="post" style="max-width:500px;margin:auto;color:#000;background:#fff;padding:20px;border-radius:10px;margin-top:20px;">
+    <h3>Billing Details</h3>
+    <input type="text" name="name" placeholder="Full Name" required><br><br>
+    <input type="text" name="address" placeholder="Address" required><br><br>
+    <input type="text" name="phone" placeholder="Phone" required><br><br>
+    
+    <h3>Payment Method</h3>
+    <label><input type="radio" name="payment" value="COD" required> Cash on Delivery</label><br>
+    <label><input type="radio" name="payment" value="UPI"> UPI</label><br>
+    <label><input type="radio" name="payment" value="Card"> Credit/Debit Card</label><br><br>
+    
+    <!-- hidden fields to send order summary -->
+    <input type="hidden" name="totalAmount" value="<?php echo $totalAmount; ?>">
+    <input type="hidden" name="totalItems" value="<?php echo $totalItems; ?>">
+    <input type="hidden" name="totalQuantity" value="<?php echo $totalQuantity; ?>">
+    
+    <button type="submit">Place Order</button>
+</form>
+<?php endif; ?>
+
 </body>
 </html>
-
-
-images/titan_raga.jpg

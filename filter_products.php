@@ -91,8 +91,12 @@ if ($result && $result->num_rows > 0) {
         echo '      <h4>'.$name.'</h4>';
         echo '  </a>';
         echo '  <p class="price">₹'.$price.'</p>';
-        echo '  <div class="buttons">';
-        echo '      <button class="buy">Add to Cart</button>';
+        echo '  <form method="post" action="add_to_cart.php" style="display:inline;">
+    <input type="hidden" name="product_id" value="<?php echo (int)$row['id']; ?>">
+    <input type="hidden" name="quantity" value="1">
+    <button type="submit" class="buy">Add to Cart</button>
+</form>
+
         echo '      <a href="wishlist_add.php?id='.$id.'"><button class="wishlist">♡ Wishlist</button></a>';
         echo '  </div>';
         echo '</div>';

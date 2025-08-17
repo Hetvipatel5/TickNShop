@@ -1,81 +1,142 @@
 <?php
-include 'auth.php'; require_login_or_redirect();
+session_start();
 include 'db.php';
 
-$user_id = (int)$_SESSION['user_id'];
+$session_id = session_id();
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
-$sql = "SELECT p.id, p.name, p.price, p.image, c.quantity
-        FROM cart c
-        JOIN products p ON p.id = c.product_id
-        WHERE c.user_id = ?";
+// --- Update quantity ---
+if (isset($_POST['update_quantity'])) {
+    $id = (int)$_POST['id'];
+    $qty = max(1, (int)$_POST['quantity']);
+
+    $sql = "UPDATE cart SET quantity=? WHERE id=? AND (session_id=? OR user_id=?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iisi", $qty, $id, $session_id, $user_id);
+    $stmt->execute();
+
+    header("Location: cart.php");
+    exit;
+}
+
+// --- Remove item ---
+if (isset($_GET['remove'])) {
+    $id = (int)$_GET['remove'];
+
+    $sql = "DELETE FROM cart WHERE id=? AND (session_id=? OR user_id=?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("isi", $id, $session_id, $user_id);
+    $stmt->execute();
+
+    header("Location: cart.php");
+    exit;
+}
+
+// --- Clear cart ---
+if (isset($_GET['clear'])) {
+    if ($user_id) {
+        $stmt = $conn->prepare("DELETE FROM cart WHERE user_id=?");
+        $stmt->bind_param("i", $user_id);
+    } else {
+        $stmt = $conn->prepare("DELETE FROM cart WHERE session_id=?");
+        $stmt->bind_param("s", $session_id);
+    }
+    $stmt->execute();
+
+    header("Location: cart.php");
+    exit;
+}
+
+// --- Fetch cart items ---
+$sql = "SELECT c.id, c.quantity, p.name, p.price, p.image 
+        FROM cart c 
+        JOIN products p ON c.product_id = p.id 
+        WHERE c.session_id=? OR c.user_id=?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
+$stmt->bind_param("si", $session_id, $user_id);
 $stmt->execute();
 $res = $stmt->get_result();
 
-$items = [];
-$total = 0;
+$cart_items = [];
+$total_items = 0;
+$total_amount = 0;
+
 while ($row = $res->fetch_assoc()) {
-    $row['subtotal'] = $row['price'] * $row['quantity'];
-    $total += $row['subtotal'];
-    $items[] = $row;
+    $cart_items[] = $row;
+    $total_items += $row['quantity'];
+    $total_amount += $row['price'] * $row['quantity'];
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Your Cart | TickNShop</title>
-  <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
-  <style>
-    .cart{max-width:900px;margin:30px auto;background:#111;padding:20px;border:2px solid #D4AF37;border-radius:12px;}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;border-bottom:1px solid #333;text-align:center;color:#fff}
-    th{color:#FFD700}
-    img{width:70px;height:70px;object-fit:cover;border-radius:6px}
-    .actions a, .actions button{margin:0 4px}
-    .total{display:flex;justify-content:flex-end;gap:20px;align-items:center;margin-top:15px}
-    .btn{background:#D4AF37;color:#000;padding:10px 14px;border:none;border-radius:6px;font-weight:bold;cursor:pointer}
-    .btn:hover{background:#FFD700}
-    input[type=number]{width:70px;padding:6px;border-radius:6px;border:1px solid #444;background:#000;color:#fff;text-align:center}
-  </style>
+    <meta charset="UTF-8">
+    <title>Your Cart | TickNShop</title>
+    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
 </head>
 <body>
-  <div class="cart">
-    <h2 style="text-align:center;color:#FFD700;">Your Cart</h2>
 
-    <?php if (!$items): ?>
-      <p style="text-align:center;color:#ccc;">Your cart is empty.</p>
+<header class="header">
+    <div class="logo">TickNShop</div>
+    <nav class="navbar">
+        <a href="index.php">Home</a>
+        <a href="wishlist.php">Wishlist</a>
+        <a href="cart.php">Cart</a>
+    </nav>
+    <div class="icons">
+        🛒 <?php echo $total_items; ?>
+    </div>
+</header>
+
+<section class="cart-page">
+    <h2>Your Shopping Cart</h2>
+
+    <?php if (empty($cart_items)): ?>
+        <p style="text-align:center; color:#FFD700;">Your cart is empty.</p>
     <?php else: ?>
-      <table>
-        <tr>
-          <th>Image</th><th>Name</th><th>Price</th><th>Qty</th><th>Subtotal</th><th>Remove</th>
-        </tr>
-        <?php foreach ($items as $it): ?>
-        <tr>
-          <td><img src="<?php echo htmlspecialchars($it['image']); ?>"></td>
-          <td><?php echo htmlspecialchars($it['name']); ?></td>
-          <td>₹<?php echo number_format($it['price'], 2); ?></td>
-          <td>
-            <form action="cart_update.php" method="POST" style="display:inline-flex;gap:6px;justify-content:center;align-items:center">
-              <input type="hidden" name="product_id" value="<?php echo (int)$it['id']; ?>">
-              <input type="number" name="quantity" min="1" value="<?php echo (int)$it['quantity']; ?>">
-              <button class="btn" type="submit">Update</button>
-            </form>
-          </td>
-          <td>₹<?php echo number_format($it['subtotal'], 2); ?></td>
-          <td class="actions">
-            <a class="btn" href="cart_remove.php?product_id=<?php echo (int)$it['id']; ?>">Remove</a>
-          </td>
-        </tr>
-        <?php endforeach; ?>
-      </table>
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($cart_items as $item): ?>
+                    <tr>
+                        <td>
+                            <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="" width="60">
+                            <?php echo htmlspecialchars($item['name']); ?>
+                        </td>
+                        <td>₹<?php echo number_format($item['price'], 2); ?></td>
+                        <td>
+                            <form method="post" action="cart.php" class="qty-form">
+                                <input type="hidden" name="id" value="<?php echo $item['id']; ?>">
+                                <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" min="1">
+                                <button type="submit" name="update_quantity">Update</button>
+                            </form>
+                        </td>
+                        <td>₹<?php echo number_format($item['price'] * $item['quantity'], 2); ?></td>
+                        <td><a href="cart.php?remove=<?php echo $item['id']; ?>" class="remove-btn">Remove</a></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
 
-      <div class="total">
-        <h3 style="color:#FFD700;margin:0">Grand Total: ₹<?php echo number_format($total, 2); ?></h3>
-        <a class="btn" href="checkout.php">Checkout</a>
-      </div>
+        <div class="cart-summary">
+            <p><strong>Total Items:</strong> <?php echo $total_items; ?></p>
+            <p><strong>Total Amount:</strong> ₹<?php echo number_format($total_amount, 2); ?></p>
+        </div>
+
+        <div class="cart-actions">
+            <a href="cart.php?clear=1" class="remove-btn">Clear Cart</a>
+            <a href="checkout.php" class="checkout-btn">Proceed to Checkout</a>
+        </div>
     <?php endif; ?>
-  </div>
+</section>
+
 </body>
 </html>

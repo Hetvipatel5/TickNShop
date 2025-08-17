@@ -8,6 +8,17 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['user_id'])) {
     $_SESSION['username'] = isset($_COOKIE['username']) ? $_COOKIE['username'] : null;
 }
 
+// --- CART COUNT (from DB not session) ---
+$session_id = session_id();
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+$sqlCartCount = "SELECT SUM(quantity) as cnt FROM cart WHERE session_id=? OR user_id=?";
+$stmtC = $conn->prepare($sqlCartCount);
+$stmtC->bind_param("si", $session_id, $user_id);
+$stmtC->execute();
+$resC = $stmtC->get_result()->fetch_assoc();
+$cart_count = $resC['cnt'] ?? 0;
+
 // Distinct brands for slider + sidebar
 $brands = [];
 $resB = $conn->query("SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand <> '' ORDER BY brand");
@@ -15,7 +26,7 @@ if ($resB) {
     while ($r = $resB->fetch_assoc()) $brands[] = $r['brand'];
 }
 
-// Distinct categories (fallback to common ones if table is empty)
+// Distinct categories (fallback if empty)
 $categories = [];
 $resC = $conn->query("SELECT DISTINCT category FROM products WHERE category IS NOT NULL AND category <> '' ORDER BY category");
 if ($resC && $resC->num_rows) {
@@ -61,7 +72,7 @@ if ($resP) {
         <?php else: ?>
             <a href="login.php" title="Login"><span>👤</span></a>
         <?php endif; ?>
-        <a href="cart.php" title="Cart"><span>🛒</span></a>
+        <a href="cart.php" title="Cart"><span>🛒 <?php echo $cart_count; ?></span></a>
     </div>
 </header>
 
@@ -139,8 +150,11 @@ if ($resP) {
         </div>
     </aside>
 
+    
+
+
+    <!-- PRODUCTS -->
     <section class="content-area">
-        <!-- BRAND SLIDER (clickable brand chips, horizontal scroll) -->
         <div id="brandSlider" class="brand-slider">
             <?php foreach ($brands as $b): ?>
                 <button class="brand-chip" data-brand="<?php echo htmlspecialchars($b); ?>">
@@ -148,32 +162,41 @@ if ($resP) {
                 </button>
             <?php endforeach; ?>
         </div>
+<div id="productGrid" class="product-grid">
+    <?php if (count($products)): ?>
+        <?php foreach ($products as $row): ?>
+            <div class="product-card">
+                <a href="product.php?id=<?php echo (int)$row['id']; ?>">
+                    <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
+                    <h4><?php echo htmlspecialchars($row['name']); ?></h4>
+                </a>
+                <p class="price">₹<?php echo number_format((float)$row['price'], 2); ?></p>
+                <div class="buttons">
+                    <!-- ADD TO CART FORM -->
+                    <!-- ADD TO CART FORM -->
+<form method="post" action="add_to_cart.php" style="display:inline;">
+    <input type="hidden" name="id" value="<?php echo (int)$row['id']; ?>">
+    <input type="hidden" name="quantity" value="1">
+    <button type="submit" class="buy">Add to Cart</button>
+</form>
 
-        <!-- PRODUCTS -->
-        <div id="productGrid" class="product-grid">
-            <?php if (count($products)): ?>
-                <?php foreach ($products as $row): ?>
-                    <div class="product-card">
-                        <a href="product.php?id=<?php echo (int)$row['id']; ?>">
-                            <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
-                            <h4><?php echo htmlspecialchars($row['name']); ?></h4>
-                        </a>
-                        <p class="price">₹<?php echo number_format((float)$row['price'], 2); ?></p>
-                        <div class="buttons">
-                            <button class="buy">Add to Cart</button>
-                            <a href="wishlist_add.php?id=<?php echo (int)$row['id']; ?>"><button class="wishlist">♡ Wishlist</button></a>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>No products available.</p>
-            <?php endif; ?>
-        </div>
+                    <!-- WISHLIST -->
+                    <a href="wishlist_add.php?id=<?php echo (int)$row['id']; ?>">
+                        <button class="wishlist">♡ Wishlist</button>
+                    </a>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No products available.</p>
+    <?php endif; ?>
+</div>
+
     </section>
 </main>
 
 <script>
-// Collect selected filters into a payload
+// (filter JS unchanged)
 function getFilters() {
     const getVals = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(i => i.value);
     return {
@@ -184,8 +207,6 @@ function getFilters() {
         topSeller: document.querySelector('input[name="topSeller"]:checked') ? 1 : 0
     };
 }
-
-// Trigger AJAX filter
 function applyFilters() {
     const payload = getFilters();
     fetch('filter_products.php', {
@@ -196,23 +217,15 @@ function applyFilters() {
     .then(r => r.text())
     .then(html => {
         document.getElementById('productGrid').innerHTML = html;
-        // sync brand chips active state
         syncBrandChips();
-    })
-    .catch(() => {
-        document.getElementById('productGrid').innerHTML = '<p style="color:#FFD700;text-align:center;">Failed to load products.</p>';
     });
 }
-
-// Sidebar listeners (any checkbox change)
 document.querySelectorAll('.sidebar input[type="checkbox"]').forEach(cb => {
     cb.addEventListener('change', applyFilters);
 });
-
-// Clear buttons per section
 document.querySelectorAll('.clear-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        const key = btn.getAttribute('data-filter'); // brands | categories | priceRanges | badges
+        const key = btn.getAttribute('data-filter');
         if (key === 'badges') {
             document.querySelectorAll('input[name="topRated"], input[name="topSeller"]').forEach(i => i.checked = false);
         } else {
@@ -221,16 +234,11 @@ document.querySelectorAll('.clear-btn').forEach(btn => {
         applyFilters();
     });
 });
-
-// Clear All
 document.getElementById('clearAll').addEventListener('click', () => {
     document.querySelectorAll('.sidebar input[type="checkbox"]').forEach(i => i.checked = false);
-    // also clear active brand chips
     document.querySelectorAll('.brand-chip.active').forEach(c => c.classList.remove('active'));
     applyFilters();
 });
-
-// Brand slider clicks toggle brand filter
 function syncBrandChips() {
     const selected = new Set(Array.from(document.querySelectorAll('input[name="brands"]:checked')).map(i => i.value));
     document.querySelectorAll('.brand-chip').forEach(chip => {
@@ -241,25 +249,19 @@ function syncBrandChips() {
 document.querySelectorAll('.brand-chip').forEach(chip => {
     chip.addEventListener('click', () => {
         const brand = chip.getAttribute('data-brand');
-        // toggle the matching checkbox
         const cb = document.querySelector(`input[name="brands"][value="${CSS.escape(brand)}"]`);
         if (cb) cb.checked = !cb.checked;
         applyFilters();
     });
 });
-
-// Top navbar category quick filter
 document.querySelectorAll('.nav-cat').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const cat = link.getAttribute('data-cat');
-        // toggle only that category on; clear others
         document.querySelectorAll('input[name="categories"]').forEach(i => i.checked = (i.value === cat));
         applyFilters();
     });
 });
-
-// On load, sync brand chip active states (no filters yet)
 syncBrandChips();
 </script>
 </body>

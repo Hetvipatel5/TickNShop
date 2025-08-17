@@ -1,19 +1,20 @@
 <?php
-// cart_update.php
-include 'auth.php'; require_login_or_redirect();
+session_start();
 include 'db.php';
 
-$user_id = (int)$_SESSION['user_id'];
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST['quantity'])) {
-    $pid = (int)$_POST['product_id'];
-    $qty = max(1, (int)$_POST['quantity']);
-
-    $sql = "UPDATE cart SET quantity=? WHERE user_id=? AND product_id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iii", $qty, $user_id, $pid);
+if (isset($_POST['id']) && isset($_POST['quantity'])) {
+    $id = intval($_POST['id']);
+    $qty = max(1, intval($_POST['quantity']));
+    $stmt = $conn->prepare("UPDATE cart SET quantity=? WHERE id=?");
+    $stmt->bind_param("ii", $qty, $id);
     $stmt->execute();
 }
-
+if (isset($_GET['remove'])) {
+    $id = intval($_GET['remove']);
+    $stmt = $conn->prepare("DELETE FROM cart WHERE id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+}
 header("Location: cart.php");
 exit;
+?>
