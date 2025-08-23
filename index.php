@@ -132,12 +132,201 @@ $highlightsOpen = !empty($_GET['topRated']) || !empty($_GET['topSeller']);
   </div>
 </header>
 
-<section class="banner">
+<!-- <section class="banner">
   <div class="banner-text">
     <h1>SELECT FROM A CURATION</h1>
     <p>Of 40+ International Brands</p>
   </div>
+</section> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TickNShop Banner Slider</title>
+  <style>
+    :root {
+      --black: #000000;
+      --charcoal: #1A1A1A;
+      --gold: #D4AF37;
+      --bright-gold: #FFD700;
+      --white: #FFFFFF;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--black);
+    }
+
+    .banner-slider {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      overflow: hidden;
+      background: var(--charcoal);
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slide.active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    .slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(2px) brightness(0.7); /* Blur and darken image */
+  transition: filter 0.3s ease;
+}
+.slide:hover img {
+  filter: blur(1px) brightness(0.7);
+}
+    .overlay-text {
+      position: absolute;
+      bottom: 50px;
+      left: 50px;
+      right: 50px;
+      color: var(--gold);
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+      text-align: center;
+    }
+
+    .overlay-text h2 {
+      font-size: 2.5rem;
+      margin: 0 0 10px 0;
+    }
+
+    .overlay-text p {
+      font-size: 1.2rem;
+      margin: 0 0 15px 0;
+      color: var(--bright-gold);
+    }
+
+    .shop-btn {
+      display: inline-block;
+      padding: 10px 25px;
+      background: var(--gold);
+      color: var(--black);
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .shop-btn:hover {
+      background: var(--bright-gold);
+      color: var(--white);
+    }
+
+    .dots {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+
+    .dot.active {
+      background: var(--bright-gold);
+      opacity: 1;
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 768px) {
+      .overlay-text h2 { font-size: 1.8rem; }
+      .overlay-text p { font-size: 1rem; }
+      .shop-btn { padding: 8px 20px; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<section class="banner-slider">
+  <div class="slide active">
+    <img src="brand_logo/men_banner.jpg" alt="Banner 1">
+    <div class="overlay-text">
+      <h2>Premium Watches</h2>
+      <p>Exclusive Collection at TickNShop</p>
+      <a href="products.php" class="shop-btn">Shop Now</a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="brand_logo/women_banner.jpg" alt="Banner 2">
+    <div class="overlay-text">
+      <h2>Luxury for Men & Women</h2>
+      <p>Shop the Latest Styles Today</p>
+      <a href="products.php" class="shop-btn">Shop Now</a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="brand_logo/couple_banner.jpg" alt="Banner 3">
+    <div class="overlay-text">
+      <h2>TickNShop Premium</h2>
+      <p>Timeless Elegance on Your Wrist</p>
+      <a href="products.php" class="shop-btn">Shop Now</a>
+    </div>
+  </div>
+
+  <div class="dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
 </section>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  let current = 0;
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+      dots[i].classList.toggle('active', i === index);
+    });
+  }
+
+  // Auto slide every 5 seconds
+  setInterval(() => {
+    current = (current + 1) % slides.length;
+    showSlide(current);
+  }, 5000);
+
+  // Dot click navigation
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      current = i;
+      showSlide(current);
+    });
+  });
+
+  // Initialize
+  showSlide(current);
+</script>
+
+</body>
+</html>
+
 
 <main class="main-content">
   <!-- SIDEBAR FILTERS -->
