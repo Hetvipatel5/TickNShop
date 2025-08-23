@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'db.php';
 
 // Validate & fetch product
@@ -20,6 +21,19 @@ if (isset($_GET['id'])) {
     echo "<h2 style='color:red; text-align:center;'>Invalid request.</h2>";
     exit;
 }
+
+// Check if product is in wishlist
+$inWish = false;
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    $wq = $conn->prepare("SELECT 1 FROM wishlist WHERE user_id=? AND product_id=? LIMIT 1");
+    $wq->bind_param("ii", $user_id, $id);
+    $wq->execute();
+    $wr = $wq->get_result();
+    if ($wr && $wr->num_rows > 0) {
+        $inWish = true;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +50,7 @@ if (isset($_GET['id'])) {
     <div class="logo">TickNShop</div>
     <nav class="navbar">
         <a href="index.php">Home</a>
-        <a href="products.php">Products</a>
+        <a href="wishlist.php">Wishlist</a>
         <a href="cart.php">Cart</a>
     </nav>
 </header>
@@ -56,35 +70,47 @@ if (isset($_GET['id'])) {
                     ? htmlspecialchars($product['description']) 
                     : "No description available."; ?>
             </p>
- <div class="buttons">
-  <!-- Add to Cart -->
-  <form action="add_to_cart.php" method="POST" style="display:inline;">
-    <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
-    <input type="hidden" name="quantity" value="1">
-    <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
-    <button type="submit" class="buy">Add to Cart</button>
-  </form>
 
-  <!-- Buy Now (go straight to checkout after adding) -->
-  <form action="add_to_cart.php" method="POST" style="display:inline;">
-    <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
-    <input type="hidden" name="quantity" value="1">
-    <input type="hidden" name="buy_now" value="1">
-    <button type="submit" class="buy">Buy Now</button>
-  </form>
+            <div class="buttons">
+                <!-- Add to Cart -->
+                <form action="add_to_cart.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
+                    <button type="submit" class="buy">Add to Cart</button>
+                </form>
 
-  <!-- Wishlist stays as you had -->
-  <a href="wishlist_add.php?id=<?php echo (int)$product['id']; ?>">
-    <button type="button" class="wishlist">♡ Wishlist</button>
-  </a>
-</div>
+                <!-- Buy Now -->
+                <form action="add_to_cart.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
+                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="buy_now" value="1">
+                    <button type="submit" class="buy">Buy Now</button>
+                </form>
 
-
+                <!-- Wishlist toggle -->
+                <form method="post" action="wishlist_toggle.php" style="display:inline;">
+                    <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
+                    <button type="submit" 
+                            class="buy wishlist-btn <?php echo $inWish ? 'active' : ''; ?>">
+                        <span class="heart"><?php echo $inWish ? '♥' : '♡'; ?></span>
+                        <?php echo $inWish ? 'Wishlist' : 'Add to Wishlist'; ?>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
-
-
 </body>
+
+<?php if (!empty($_SESSION['flash'])): ?>
+  <div class="toast" id="toast"><?php echo $_SESSION['flash']; unset($_SESSION['flash']); ?></div>
+  <script>
+    const t = document.getElementById('toast');
+    setTimeout(()=> t.style.opacity='0', 2000);
+    setTimeout(()=> t.remove(), 2600);
+  </script>
+<?php endif; ?>
+
 </html>

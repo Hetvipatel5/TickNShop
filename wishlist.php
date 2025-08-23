@@ -33,6 +33,7 @@ $result = $stmt->get_result();
     <nav class="navbar">
         <a href="index.php">Home</a>
         <a href="wishlist.php">Wishlist</a>
+        <a href="cart.php">Cart</a>
         <a href="logout.php">Logout</a>
     </nav>
 </header>
@@ -44,12 +45,27 @@ $result = $stmt->get_result();
             <?php while ($row = $result->fetch_assoc()): ?>
                 <div class="product-card">
                     <a href="product.php?id=<?php echo $row['id']; ?>">
-                        <img src="<?php echo $row['image']; ?>" alt="<?php echo $row['name']; ?>">
-                        <h4><?php echo $row['name']; ?></h4>
+                        <img src="<?php echo htmlspecialchars($row['image']); ?>" 
+                             alt="<?php echo htmlspecialchars($row['name']); ?>">
+                        <h4><?php echo htmlspecialchars($row['name']); ?></h4>
                     </a>
                     <p class="price">₹<?php echo number_format($row['price'], 2); ?></p>
                     <div class="buttons">
-                        <a href="wishlist_remove.php?id=<?php echo $row['id']; ?>" class="remove-btn">❌ Remove</a>
+                        <!-- Add to Cart -->
+                        <form action="add_to_cart.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="product_id" value="<?php echo (int)$row['id']; ?>">
+                            <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
+                            <button type="submit" class="buy">Add to Cart</button>
+                        </form>
+
+                        <!-- Remove from Wishlist -->
+                        <form action="wishlist_remove.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="product_id" value="<?php echo (int)$row['id']; ?>">
+                            <button type="submit" class="buy remove-btn" style="background-color:#e74c3c;">
+                                ❌ Remove
+                            </button>
+                        </form>
                     </div>
                 </div>
             <?php endwhile; ?>
@@ -59,5 +75,14 @@ $result = $stmt->get_result();
     </div>
 </main>
 </body>
+
+<?php if (!empty($_SESSION['flash'])): ?>
+  <div class="toast" id="toast"><?php echo $_SESSION['flash']; unset($_SESSION['flash']); ?></div>
+  <script>
+    const t = document.getElementById('toast');
+    setTimeout(()=> t.style.opacity='0', 2000);
+    setTimeout(()=> t.remove(), 2600);
+  </script>
+<?php endif; ?>
+
 </html>
-s
