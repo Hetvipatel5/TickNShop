@@ -106,6 +106,8 @@ $highlightsOpen = !empty($_GET['topRated']) || !empty($_GET['topSeller']);
   .filter-title .toggle { user-select:none; }
   .filter-title button.clear-btn { cursor:pointer; }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 <body>
 
@@ -120,16 +122,13 @@ $highlightsOpen = !empty($_GET['topRated']) || !empty($_GET['topSeller']);
     <a href="#">Brands</a>
     <a href="#">Offers</a>
   </nav>
-  <div class="icons">
-    <span>🔍</span>
-    <a href="wishlist.php" title="Wishlist"><span>❤</span></a>
-    <?php if ($user_id): ?>
-      <a href="logout.php" title="Logout"><span>🔓</span></a>
-    <?php else: ?>
-      <a href="login.php" title="Login"><span>👤</span></a>
-    <?php endif; ?>
-    <a href="cart.php" title="Cart"><span>🛒 <?php echo $cart_count; ?></span></a>
-  </div>
+<div class="icons">
+    <a href="search.php"><i class="fas fa-search"></i></a>
+    <a href="wishlist.php" title="Wishlist"><i class="fas fa-heart"></i></a>
+    <a href="profile.php" title="Profile"><i class="fas fa-user"></i></a>
+    <a href="cart.php" title="Cart"><i class="fas fa-shopping-cart"></i></a>
+</div>
+
 </header>
 
 <!-- <section class="banner">
@@ -286,9 +285,17 @@ $highlightsOpen = !empty($_GET['topRated']) || !empty($_GET['topSeller']);
       <a href="products.php" class="shop-btn">Shop Now</a>
     </div>
   </div>
-
+ <div class="slide">
+    <img src="brand_logo/premium_banner.jpg" alt="Banner 3">
+    <div class="overlay-text">
+      <h2>TickNShop Luxury</h2>
+      <p>Indulge in Opulence</p>
+      <a href="products.php" class="shop-btn">Shop Now</a>
+    </div>
+  </div>
   <div class="dots">
     <span class="dot active"></span>
+    <span class="dot"></span>
     <span class="dot"></span>
     <span class="dot"></span>
   </div>
