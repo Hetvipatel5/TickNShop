@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include_once __DIR__ . '/db.php'; // ✅ use shared DB connection
 
 // Restore session if user is remembered
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['user_id'])) {

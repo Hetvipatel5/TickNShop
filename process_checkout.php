@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include_once __DIR__ . '/db.php'; // ✅ use shared DB connection
 
 $session_id = session_id();
 $user_id    = $_SESSION['user_id'] ?? null;

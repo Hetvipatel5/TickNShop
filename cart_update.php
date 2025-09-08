@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include_once __DIR__ . '/db.php'; // ✅ use shared DB connection    
 
 if (isset($_POST['id']) && isset($_POST['quantity'])) {
     $id = intval($_POST['id']);

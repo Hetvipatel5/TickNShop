@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
-include 'db.php';
+include_once __DIR__ . '/db.php'; // ✅ use shared DB connection
 
 // Read JSON safely
 $raw = file_get_contents('php://input');

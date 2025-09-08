@@ -1,17 +1,8 @@
 <?php
+session_start(); // Start session for user login
+include_once __DIR__ . '/db.php'; // ✅ use shared DB connections
 include 'message.php'; // ✅ Include the message function file
-// Database connection
-$servername = "localhost";
-$username = "root"; // default XAMPP username
-$password = ""; // default XAMPP password
-$dbname = "watchshop"; // your database name
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die(showMessage("error", "Connection failed: " . $conn->connect_error, "Try Again", "signup.php"));
-}
 
 // Get form data
 $fullname = trim($_POST['fullname']);

@@ -1,7 +1,7 @@
 <?php
 // cart_remove.php
 include 'auth.php'; require_login_or_redirect();
-include 'db.php';
+include_once __DIR__ . '/db.php'; // ✅ use shared DB connection
 
 $user_id = (int)$_SESSION['user_id'];
 

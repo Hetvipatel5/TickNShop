@@ -1,17 +1,9 @@
 <?php
 session_start();
+include_once __DIR__ . '/db.php'; // ✅ use shared DB connection
+
 include 'message.php';
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "watchshop";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Get form data
 $user = trim($_POST['username']);

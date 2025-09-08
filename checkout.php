@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include_once __DIR__ . '/db.php'; // ✅ use shared DB connection
 
 $session_id = session_id();
 $user_id    = $_SESSION['user_id'] ?? null;
@@ -17,7 +17,7 @@ $sql->execute();
 $cart_items = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
 
 if (empty($cart_items)) {
-    die("<h2 style='color:white;text-align:center;'>Your cart is empty. <a href='index.php' style='color:#FFD700;'>Continue Shopping</a></h2>");
+    die("<h2 style='color:yellow;text-align:center;'>Your cart is empty. <a href='index.php' style='color:#FFD700;'>Continue Shopping</a></h2>");
 }
 ?>
 <!DOCTYPE html>
