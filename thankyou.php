@@ -4,7 +4,7 @@ include 'db.php';
 $order_id = $_GET['order_id'] ?? 0;
 
 // Fetch order details
-$order = $conn->prepare("SELECT * FROM orders WHERE id = ?");
+$order = $conn->prepare("SELECT * FROM orders WHERE order_id = ?"); // <-- change 'id' to 'order_id'
 $order->bind_param("i", $order_id);
 $order->execute();
 $orderData = $order->get_result()->fetch_assoc();
@@ -26,80 +26,19 @@ $orderItems = $items->get_result()->fetch_all(MYSQLI_ASSOC);
 <head>
     <title>Order Invoice - TickNShop</title>
     <style>
-        body {
-            background: #000;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 30px;
-            display: flex;
-            justify-content: center;
-        }
-        .invoice-container {
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
-            padding: 25px;
-            max-width: 800px;
-            width: 100%;
-        }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #D4AF37;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .header h1 {
-            color: #D4AF37;
-            margin: 0;
-        }
-        .order-info, .customer-info {
-            margin-bottom: 15px;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .order-info p, .customer-info p {
-            margin: 3px 0;
-            font-size: 14px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-        }
-        th, td {
-            border-bottom: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background: #f1f1f1;
-        }
-        img {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-        .total {
-            text-align: right;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .btn {
-            display: inline-block;
-            margin-top: 15px;
-            background: #D4AF37;
-            color: black;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-        .btn:hover {
-            background: #FFD700;
-        }
+        body { background: #000; font-family: Arial, sans-serif; margin: 0; padding: 30px; display: flex; justify-content: center; }
+        .invoice-container { background: #fff; border-radius: 15px; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3); padding: 25px; max-width: 800px; width: 100%; }
+        .header { text-align: center; border-bottom: 2px solid #D4AF37; padding-bottom: 10px; margin-bottom: 15px; }
+        .header h1 { color: #D4AF37; margin: 0; }
+        .order-info, .customer-info { margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 8px; }
+        .order-info p, .customer-info p { margin: 3px 0; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background: #f1f1f1; }
+        img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .total { text-align: right; font-size: 16px; font-weight: bold; margin-top: 10px; }
+        .btn { display: inline-block; margin-top: 15px; background: #D4AF37; color: black; padding: 12px 20px; border-radius: 10px; font-weight: bold; text-decoration: none; }
+        .btn:hover { background: #FFD700; }
     </style>
 </head>
 <body>

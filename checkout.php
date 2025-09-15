@@ -1,23 +1,35 @@
 <?php
 session_start();
-include_once __DIR__ . '/db.php'; // ✅ use shared DB connection
+include_once __DIR__ . '/db.php';
 
-$session_id = session_id();
-$user_id    = $_SESSION['user_id'] ?? null;
-
-// Fetch cart items
-if ($user_id) {
-    $sql = $conn->prepare("SELECT c.*, p.name, p.price, p.image FROM cart c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?");
-    $sql->bind_param("i", $user_id);
-} else {
-    $sql = $conn->prepare("SELECT c.*, p.name, p.price, p.image FROM cart c JOIN products p ON c.product_id = p.id WHERE c.session_id = ?");
-    $sql->bind_param("s", $session_id);
+// ✅ Ensure user is logged in
+$user_id = $_SESSION['user_id'] ?? null;
+if (!$user_id) {
+    $_SESSION['flash'] = "You must be logged in to checkout.";
+    header("Location: login.php");
+    exit;
 }
+
+// Fetch cart items for logged-in user
+$sql = $conn->prepare("
+    SELECT c.*, p.name, p.price, p.image 
+    FROM cart c 
+    JOIN products p ON c.product_id = p.id 
+    WHERE c.user_id = ?
+");
+$sql->bind_param("i", $user_id);
 $sql->execute();
 $cart_items = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
 
+// If cart is empty
 if (empty($cart_items)) {
     die("<h2 style='color:yellow;text-align:center;'>Your cart is empty. <a href='index.php' style='color:#FFD700;'>Continue Shopping</a></h2>");
+}
+
+// Calculate total
+$total = 0;
+foreach ($cart_items as $item) {
+    $total += $item['price'] * $item['quantity'];
 }
 ?>
 <!DOCTYPE html>
@@ -26,7 +38,7 @@ if (empty($cart_items)) {
     <title>Checkout - TickNShop</title>
     <style>
         body {
-            background: #000000;
+            background: #000;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
@@ -42,7 +54,7 @@ if (empty($cart_items)) {
             width: 100%;
         }
         .card {
-            background: #FFFFFF;
+            background: #fff;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
             padding: 20px;
@@ -59,7 +71,7 @@ if (empty($cart_items)) {
             font-weight: bold;
             color: #333;
         }
-        form input, form textarea, form select {
+        form input, form textarea {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -136,10 +148,9 @@ if (empty($cart_items)) {
             <label>Address</label>
             <textarea name="address" required></textarea>
 
-          <label>Payment Method</label>
-<input type="hidden" name="payment_method" value="cod">
-<p style="margin:10px 0; font-weight:bold;">Cash on Delivery</p>
-
+            <label>Payment Method</label>
+            <input type="hidden" name="payment_method" value="cod">
+            <p style="margin:10px 0; font-weight:bold;">Cash on Delivery</p>
 
             <button type="submit" class="btn">🛒 Place Order</button>
         </form>
@@ -155,10 +166,8 @@ if (empty($cart_items)) {
                 <th>Qty</th>
                 <th>Price</th>
             </tr>
-            <?php $total = 0; ?>
             <?php foreach ($cart_items as $item): 
                 $lineTotal = $item['price'] * $item['quantity'];
-                $total += $lineTotal;
             ?>
                 <tr>
                     <td><img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>"></td>
@@ -184,11 +193,9 @@ if (empty($cart_items)) {
             let row = this.closest('tr');
             let lineTotalCell = row.querySelector('.line-total');
 
-            // Update line total
             let newLineTotal = price * qty;
             lineTotalCell.innerText = "₹" + newLineTotal.toFixed(2);
 
-            // Recalculate grand total
             let grandTotal = 0;
             document.querySelectorAll('.line-total').forEach(cell => {
                 grandTotal += parseFloat(cell.innerText.replace('₹',''));
