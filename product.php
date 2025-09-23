@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include_once __DIR__ . '/db.php';
 
 // Validate & fetch product
 if (!isset($_GET['id'])) {
