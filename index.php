@@ -98,38 +98,47 @@ $highlightsOpen = !empty($_GET['topRated']) || !empty($_GET['topSeller']);
 
 <!-- ==================== BANNER SLIDER ==================== -->
 <section class="banner-slider">
+  <!-- Men -->
   <div class="slide active">
     <img src="brand_logo/men_banner.jpg" alt="Men Banner">
     <div class="overlay-text">
-      <h2>Premium Watches</h2>
-      <p>Exclusive Collection at TickNShop</p>
-      <a href="products.php" class="shop-btn">Shop Now</a>
+      <h2>Premium Watches for Men</h2>
+      <p>Style Meets Precision</p>
+      <a href="products.php?category=men" class="shop-btn">Shop Now</a>
     </div>
   </div>
+
+  <!-- Women -->
   <div class="slide">
     <img src="brand_logo/women_banner.jpg" alt="Women Banner">
     <div class="overlay-text">
-      <h2>Luxury for Men & Women</h2>
-      <p>Shop the Latest Styles Today</p>
-      <a href="products.php" class="shop-btn">Shop Now</a>
+      <h2>Luxury Watches for Women</h2>
+      <p>Elegance on Every Wrist</p>
+      <a href="products.php?category=women" class="shop-btn">Shop Now</a>
     </div>
   </div>
+
+  <!-- Couple -->
   <div class="slide">
-    <img src="brand_logo/couple_banner.jpg" alt="Couple Banner">
+    <img src="brand_logo/couple1_banner.jpg" alt="Couple Banner">
     <div class="overlay-text">
-      <h2>TickNShop Premium</h2>
-      <p>Timeless Elegance on Your Wrist</p>
-      <a href="products.php" class="shop-btn">Shop Now</a>
+      <h2>Couple Edition</h2>
+      <p>Perfect Pair, Perfect Time</p>
+      <a href="products.php?category=couple" class="shop-btn">Shop Now</a>
     </div>
   </div>
+
+  <!-- Premium -->
   <div class="slide">
     <img src="brand_logo/premium_banner.jpg" alt="Premium Banner">
     <div class="overlay-text">
-      <h2>TickNShop Luxury</h2>
-      <p>Indulge in Opulence</p>
-      <a href="products.php" class="shop-btn">Shop Now</a>
+      <h2>TickNShop Premium</h2>
+      <p>Timeless Luxury, Unmatched Craftsmanship</p>
+      <a href="products.php?category=premium" class="shop-btn">Shop Now</a>
     </div>
   </div>
+</section>
+
 <!-- Navigation Arrows -->
   <button class="banner-prev">&#10094;</button>
   <button class="banner-next">&#10095;</button>

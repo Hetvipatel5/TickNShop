@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
 
     if ($row = $result->fetch_assoc()) {
-        if ($row['password'] === md5($pass)) {
+        if ($row['password'] === ($pass)) {
             $_SESSION['admin_logged_in'] = true;
             $_SESSION['admin_username'] = $row['username'];
             header("Location: index.php");

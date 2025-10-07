@@ -67,7 +67,7 @@ $pending_orders = $conn->query("SELECT COUNT(*) AS c FROM orders WHERE status='p
       <a href="admin_orders.php" class="btn btn-secondary">Manage Orders</a>
       <a href="admin_users.php" class="btn btn-info">Manage Users</a>
       <a href="admin_feedback.php" class="btn btn-warning">View Feedback</a>
-      <a href="admin/logout.php" class="btn btn-danger">Logout</a>
+      <a href="logout.php" class="btn btn-danger" onclick="return confirm('Are you sure you want to logout?')">Logout</a>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
